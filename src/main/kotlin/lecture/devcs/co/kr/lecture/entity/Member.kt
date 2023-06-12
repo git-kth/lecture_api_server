@@ -16,7 +16,7 @@ class Member(
     @JoinTable(
             name = "member_authority",
             joinColumns = [JoinColumn(name = "member_id")],
-            inverseJoinColumns = [JoinColumn(name = "authority_id")]
+            inverseJoinColumns = [JoinColumn(name = "authority_name")]
     )
-    val authorites: MutableSet<Authority> = mutableSetOf()
+    val authorities: MutableSet<Authority> = mutableSetOf()
 )

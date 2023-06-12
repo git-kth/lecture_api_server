@@ -10,7 +10,7 @@ import java.time.LocalDate
 class Author(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    val name: String,
-    val birthDate: LocalDate,
-    val deathDate: LocalDate?
+    var name: String,
+    var birthDate: LocalDate,
+    var deathDate: LocalDate?
 )
