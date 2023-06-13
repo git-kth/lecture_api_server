@@ -27,22 +27,17 @@ class AdminController(
     @Autowired private val authorRepository: AuthorRepository,
     @Autowired private val bookInstanceRepository: BookInstanceRepository
 ) {
+
+    @GetMapping("/allloan")
+    fun allLoan(): ResponseEntity<Any?> {
+        return ResponseEntity.ok().body(bookInstanceRepository.findAll())
+    }
     @PostMapping("/book")
     fun bookRegister(@RequestBody @Validated bookRequest: BookRequest, bindingResult: BindingResult): ResponseEntity<Any?> {
         if(bindingResult.hasErrors()) return ResponseEntity.badRequest().body(fieldErrors(bindingResult))
         if(!authorRepository.existsById(bookRequest.author_id)) return ResponseEntity.badRequest().body("저자 정보가 없습니다.")
         bookRepository.save(Book(title = bookRequest.title, summary = bookRequest.summary, author = authorRepository.findById(bookRequest.author_id).get()))
         return ResponseEntity.ok().body(null)
-    }
-
-    @GetMapping("/book")
-    fun bookList(
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "id") sort: String,
-        @RequestParam(defaultValue = "asc") order: String
-    ): Page<Book> {
-        val pageable = PageRequest.of(page, 10, Sort.by(if(order == "asc") Sort.Direction.ASC else Sort.Direction.DESC, sort))
-        return bookRepository.findAll(pageable)
     }
 
     @GetMapping("/book/{id}")
@@ -76,16 +71,6 @@ class AdminController(
         if(bindingResult.hasErrors()) return ResponseEntity.badRequest().body(fieldErrors(bindingResult))
         authorRepository.save(Author(name = authorRequest.name, birthDate = authorRequest.birthDate, deathDate = authorRequest.deathDate))
         return ResponseEntity.ok().body(null)
-    }
-
-    @GetMapping("/author")
-    fun authorList(
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "id") sort: String,
-        @RequestParam(defaultValue = "asc") order: String
-    ): Page<Author> {
-        val pageable = PageRequest.of(page, 10, Sort.by(if(order == "asc") Sort.Direction.ASC else Sort.Direction.DESC, sort))
-        return authorRepository.findAll(pageable)
     }
 
     @GetMapping("/author/{id}")
@@ -122,15 +107,7 @@ class AdminController(
         return ResponseEntity.ok().body(null)
     }
 
-    @GetMapping("/bookinstance")
-    fun bookInstanceList(
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "id") sort: String,
-        @RequestParam(defaultValue = "asc") order: String
-    ): Page<BookInstance> {
-        val pageable = PageRequest.of(page, 10, Sort.by(if(order == "asc") Sort.Direction.ASC else Sort.Direction.DESC, sort))
-        return bookInstanceRepository.findAll(pageable)
-    }
+
 
     @GetMapping("/bookinstance/{uuid}")
     fun bookInstanceDetail(@PathVariable uuid: UUID):ResponseEntity<Any?> {
